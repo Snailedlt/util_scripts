@@ -32,46 +32,54 @@ if response.status_code != 200:
 
 repositories = [repo["name"] for repo in response.json()]
 
-# Create teams for each repository and assign roles
+# Create root-level teams for each repository
 for repo in repositories:
+    root_team_name = repo
+    root_team_description = f"Root-level team for {repo}"
+
+    root_team_url = f"https://api.github.com/orgs/{organization}/teams"
+    headers = {
+        "Authorization": f"Bearer {personal_access_token}",
+        "Accept": "application/vnd.github.v3+json",
+    }
+
+    root_team_data = {
+        "name": root_team_name,
+        "description": root_team_description,
+        "privacy": "closed",  # Change to "secret" if desired
+    }
+
+    root_team_response = requests.post(root_team_url, json=root_team_data, headers=headers)
+
+    if root_team_response.status_code == 201:
+        print(f"{GREEN}Root-level team '{root_team_name}' created successfully for '{repo}'.{RESET}")
+        root_team_id = root_team_response.json()["id"]
+    elif root_team_response.status_code == 422:
+        print(f"{YELLOW}Root-level team '{root_team_name}' already exists for '{repo}'.{RESET}")
+    else:
+        print(f"{RED}Failed to create root-level team for '{repo}'. Status code:", root_team_response.status_code + RESET)
+        print(root_team_response.text)
+        continue
+
+    # Create child teams for different access levels
     for role in roles:
-        # Create a team for the specific role
-        team_name = f"{repo}__{role.capitalize()}"  # Use double underscore as a separator
-        team_description = f"Team with {role} access to {repo}"
+        child_team_name = f"{repo}__{role.capitalize()}"
+        child_team_description = f"Team with {role} access to the {repo} repository"
 
-        url = f"https://api.github.com/orgs/{organization}/teams"
-        headers = {
-            "Authorization": f"Bearer {personal_access_token}",
-            "Accept": "application/vnd.github.v3+json",
-        }
-
-        data = {
-            "name": team_name,
-            "description": team_description,
+        child_team_url = f"https://api.github.com/orgs/{organization}/teams"
+        child_team_data = {
+            "name": child_team_name,
+            "description": child_team_description,
             "privacy": "closed",  # Change to "secret" if desired
+            "parent_team_id": root_team_id  # Set the parent team for nesting
         }
 
-        response = requests.post(url, json=data, headers=headers)
+        child_team_response = requests.post(child_team_url, json=child_team_data, headers=headers)
 
-        if response.status_code == 201:
-            print(f"{GREEN}Team '{team_name}' created successfully for '{repo}'.{RESET}")
-            team_id = response.json()["id"]
-
-            # Add the team to the repository with the appropriate role
-            repo_url = f"https://api.github.com/teams/{team_id}/repos/{organization}/{repo}"
-            data = {"permission": role}
-
-            response = requests.put(repo_url, json=data, headers=headers)
-
-            if response.status_code == 204:
-                print(f"{GREEN}Added '{team_name}' to '{repo}' with '{role}' role.{RESET}")
-            elif response.status_code == 422:
-                print(f"{YELLOW}Team '{team_name}' already exists for '{repo}'.{RESET}")
-            else:
-                print(f"{RED}Failed to add team '{team_name}' to '{repo}' with '{role}' role. Status code:", response.status_code + RESET)
-                print(response.text)
-        elif response.status_code == 422:
-            print(f"{YELLOW}Team '{team_name}' already exists in the {organization} organization.{RESET}")
+        if child_team_response.status_code == 201:
+            print(f"{GREEN}Child team '{child_team_name}' created successfully for '{repo}'.{RESET}")
+        elif child_team_response.status_code == 422:
+            print(f"{YELLOW}Child team '{child_team_name}' already exists for '{repo}'.{RESET}")
         else:
-            print(f"{RED}Failed to create team for '{repo}' with role '{role}'. Status code:", response.status_code + RESET)
-            print(response.text)
+            print(f"{RED}Failed to create child team for '{repo}'. Status code:", child_team_response.status_code + RESET)
+            print(child_team_response.text)
