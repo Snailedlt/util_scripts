@@ -7,8 +7,8 @@ from custom_logging import print_error, print_warning, print_success
 load_dotenv()
 
 # Read organization and personal access token from the .env file
-organization = "Snailedlt-Test-Organization" # os.getenv("CREATE_GITHUB_TEAMS_FOR_EACH_REPO_AND_ACCESS_LEVEL__ORGANIZATION")
-personal_access_token = os.getenv("CREATE_GITHUB_TEAMS_FOR_EACH_REPO_AND_ACCESS_LEVEL__TOKEN")
+organization = os.getenv("ORGANIZATION")
+personal_access_token = os.getenv("PERSONAL_ACCESS_TOKEN")
 
 # Regular expression to match team names
 regex_pattern = r".*__reviewers"

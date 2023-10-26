@@ -6,8 +6,8 @@ from custom_logging import print_error, print_success, print_warning  # Import f
 load_dotenv()
 
 # Fill these in in the .env file
-organization = os.getenv("CREATE_GITHUB_TEAMS_FOR_EACH_REPO_AND_ACCESS_LEVEL__ORGANIZATION")
-personal_access_token = os.getenv("CREATE_GITHUB_TEAMS_FOR_EACH_REPO_AND_ACCESS_LEVEL__TOKEN") # Must have repo and admin:org scopes
+organization = os.getenv("ORGANIZATION")
+personal_access_token = os.getenv("PERSONAL_ACCESS_TOKEN") # Must have repo and admin:org scopes
 
 # valid roles are "admin", "maintain", "triage", "push", "pull"
 roles = ["admin", "maintain", "triage"]
