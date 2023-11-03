@@ -1,3 +1,23 @@
+"""
+This script updates the descriptions of GitHub teams based on their names.
+
+Here's how it works:
+
+1. Fetches all teams within a specified GitHub organization.
+2. Checks if the team name matches a specified regular expression pattern.
+3. If a match is found, it generates a new description for the team.
+4. Updates the team's description on GitHub.
+
+Please note:
+
+- This script operates with the GitHub API. It needs a personal access token with suitable permissions.
+- It fetches the organization name and token from environment variables.
+- The current regex pattern identifies teams for updates. Specifically, teams ending in "__reviewers".
+- It creates a new description by removing "__reviewers" from the team name, and using it as the "repo_name".
+- For example: If the team name is "project__reviewers", then the description will be
+  "Reviewers for the project repo. Use this team for PR reviews".
+- If you want a different regex pattern, it needs to be edited inside the script.
+"""
 import os
 import requests
 import re

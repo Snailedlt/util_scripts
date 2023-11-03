@@ -1,11 +1,3 @@
-import os
-import requests
-import re
-from dotenv import load_dotenv
-from custom_logging import print_error, print_success
-
-load_dotenv()
-
 """
 A script to add repositories to all teams that match a regex based on the team
 name.
@@ -15,6 +7,14 @@ If the regex is r"(.*)__reviewers" then the match from the
 regex will be the repository name. Add the repository with that repository
 name to that repo.
 """
+
+import os
+import requests
+import re
+from dotenv import load_dotenv
+from custom_logging import print_error, print_success
+
+load_dotenv()
 
 # Read organization and personal access token from the .env file
 organization = os.getenv("ORGANIZATION")

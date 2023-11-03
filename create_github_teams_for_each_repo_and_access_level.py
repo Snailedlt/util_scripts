@@ -1,3 +1,19 @@
+"""
+This script is used to create GitHub teams for each repository in a given organization.
+
+It first fetches all repositories in the organization, then creates a root-level team for each repository.
+If the root-level team already exists, it fetches the ID of the existing team.
+
+Then, it creates child teams for different access levels (admin, maintain, write, triage) under each root-level team.
+The access level for each child team is set according to the roles_and_permissions dictionary.
+
+Environment Variables:
+- ORGANIZATION: The name of the GitHub organization.
+- PERSONAL_ACCESS_TOKEN: A personal access token for the GitHub API. The token must have the repo and admin:org scopes.
+
+Usage:
+python create_github_teams_for_each_repo_and_access_level.py
+"""
 #TODO: Fix the issue where the response is 422 but the team doesn't exist
 
 from dotenv import load_dotenv
